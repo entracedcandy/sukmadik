@@ -6,6 +6,10 @@
     <h3 class="mb-4">Pengajuan Jadwal Bimbingan</h3>
     <form>
         <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="nim" placeholder="Masukkan Email">
+        </div>
+        <div class="mb-3">
             <label for="nim" class="form-label">NIM</label>
             <input type="text" class="form-control" id="nim" name="nim" placeholder="Masukkan NIM">
         </div>
@@ -49,8 +53,8 @@
             <select class="form-select" id="dosen" name="id_dosen">
                 <option selected disabled>Pilih Dosen</option>
                 {{-- Melakukan loop untuk mengisi opsi Dosen dari data $usersDosen --}}
-                @foreach($usersDosen as $userDosen)
-                    <option value="{{ $userDosen->id_user }}">{{ $userDosen->nama }}</option>
+                @foreach($userDosen as $Dosen)
+                    <option value="{{ $Dosen->id_user }}">{{ $Dosen->nama }}</option>
                 @endforeach
             </select>
         </div>
@@ -69,8 +73,12 @@
             <input type="date" class="form-control" id="tanggal" name="tanggal">
         </div>
         <div class="mb-3">
-            <label for="keperluan" class="form-label">Keperluan</label>
-            <textarea class="form-control" id="keperluan" name="keperluan" rows="3" placeholder="Tulis Keperluan"></textarea>
+            <label for="tujuan" class="form-label">Tujuan</label>
+            <input type="text" class="form-control" id="tujuan" name="tujuan" placeholder="Masukkan ">
+        </div>
+        <div class="mb-3">
+            <label for="catatan" class="form-label">Catatan</label>
+            <textarea class="form-control" id="catatan" name="catatan" rows="3" placeholder="Tulis catatan"></textarea>
         <div class="d-grid">
             <button type="submit" class="btn btn-primary">cari sesi</button>
         </div>

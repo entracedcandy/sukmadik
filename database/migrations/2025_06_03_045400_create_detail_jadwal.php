@@ -19,9 +19,11 @@ return new class extends Migration
             $table->foreign('id_matkul')->references('id_matkul')->on('matkul')->onDelete('cascade');
             $table->foreignId('id_ruangan')->nullable();
             $table->foreign('id_ruangan')->references('id_ruangan')->on('ruangan')->onDelete('cascade');
+            $table->foreignId('id_golongan')->nullable();
+            $table->foreign('id_golongan')->references('id_golongan')->on('golongan')->onDelete('cascade');
             $table->foreignId('id_jadwal');
             $table->foreign('id_jadwal')->references('id_jadwal')->on('jadwal')->onDelete('cascade');
-
+            
         });
     }
 

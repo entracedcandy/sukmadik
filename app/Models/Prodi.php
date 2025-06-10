@@ -19,4 +19,10 @@ class Prodi extends Model
     public function user(): HasMany{
         return $this->hasMany(User::class, 'id_prodi', 'id_prodi');
     }
+
+    public function userDosen(): HasMany{
+        return $this->hasMany(User::class, 'id_prodi', 'id_prodi')->where('level', 2);
+    }
+
+
 }
