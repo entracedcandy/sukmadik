@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use \Illuminate\Database\Eloquent\Relations\HasMany;
 class Ruangan extends Model
 {
     protected $table = 'ruangan';
@@ -18,7 +18,12 @@ class Ruangan extends Model
      */
     public function kampus(): BelongsTo
     {
-        return $this->belongsTo(kampus::class, 'foreign_key', 'other_key');
+        return $this->belongsTo(kampus::class, 'id_kampus', 'id_kampus');
+    }
+
+    public function detail_jadwal(): HasMany
+    {
+        return $this->hasMany(kampus::class, 'id_ruangan', 'id_ruangan');
     }
 
 }

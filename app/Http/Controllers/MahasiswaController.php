@@ -7,57 +7,143 @@ use Carbon\Carbon;
 use App\Models\Prodi;
 use App\Models\Jadwal;
 use App\Models\Kampus;
-use App\Models\Jurusan;
+use App\Models\Ruangan;
 use App\Models\Golongan;
 use App\Models\semester;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use App\Models\User; // Pastikan model User diimpor
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
 
 class MahasiswaController extends Controller
 {
-    public function index($id_kampus, $id_prodi)
-    {
-        // Mengambil objek Kampus dan memuat relasi bertingkatnya:
-        // kampus -> jurusan (banyak)
-        // jurusan -> prodi (banyak)
-        // prodi -> userDosen (banyak, yaitu user dengan level 'dosen')
-        $kampus = Kampus::with(['jurusan.prodi.userDosen']) // Menggunakan relasi 'userDosen'
-                        ->findOrFail($id_kampus);
+  
+    public function index(Request $request, $id_kampus, $id_prodi)
+{
+    $selectedDosen = $request->input('dosen');     // ex: 4
+    $selectedSemester = $request->input('semester'); // ex: 4
 
-        
-        $jurusans = $kampus->jurusan; // Koleksi Jurusan dari kampus ini
-        $prodis = collect();
-        foreach ($jurusans as $jurusan) {
-            if ($jurusan->relationLoaded('prodi')) {
-                $prodis = $prodis->concat($jurusan->prodi);
-            }
+    $listSemester = DB::table('semester')->where('status', 1)->get();
+
+    $listdosen = DB::table('user')
+        ->where('level', 2)
+        ->where('id_prodi', $id_prodi)
+        ->get();
+
+    $filterStatus = request()->get('status', 1);
+
+    $jadwalkuliah = User::with([
+        'detail_jadwal' => function ($q) use ($filterStatus) {
+            $q->whereHas('jadwal', function ($sub) use ($filterStatus) {
+                $sub->where('status', $filterStatus);
+            })
+            ->orderBy('id_ruangan') 
+            ->orderBy('id_sesi');  
+        },
+        'detail_jadwal.jadwal',
+        'detail_jadwal.matkul.pengampuutama',
+        'detail_jadwal.matkul.pengampukedua',
+        'detail_jadwal.golongan',
+        'detail_jadwal.ruangan',
+        'detail_jadwal.sesi',
+        ])
+        ->where('level', 2)
+        ->where('id_prodi', $id_prodi)
+        ->where('id_user', $selectedDosen)
+        ->get();
+
+
+        $jadwalbimbingan = User::with([
+                           'detail_bimbingan' => function ($q) use ($filterStatus) {
+                               $q->whereHas('jadwal', function ($sub) use ($filterStatus) {
+                                   $sub->where('status', $filterStatus);
+                               })
+                               ->orderBy('id_sesi');
+                           },
+                           'detail_bimbingan.jadwal.user',
+                           'detail_bimbingan.sesi',
+                           'detail_bimbingan.golongan',
+                           'detail_bimbingan.semester',
+                       ])
+                       ->where('level', 2) 
+                       ->where('id_prodi', $id_prodi) 
+                       ->where('id_user', $selectedDosen)
+                       ->get();
+
+    $gabungan = collect();
+
+    // Gabungkan detail_jadwal dari semua user
+    foreach ($jadwalkuliah as $user) {
+        foreach ($user->detail_jadwal as $item) {
+            $gabungan->push($item);
         }
-        
-
-        $prodil = $prodis->firstWhere('id_prodi', $id_prodi);
-        $id_jurusan = $prodil->id_jurusan;
-        // --- BAGIAN YANG DIUBAH/Disesuaikan ---
-        // Mengumpulkan semua User (Dosen) dari Prodi yang terkait
-        // Karena relasi di Prodi::userDosen() sudah memfilter 'level' = 'dosen',
-        // kita hanya perlu menggabungkan hasilnya.
-        $userDosen = collect();
-        foreach ($prodis as $prodi) {
-            if ($prodi->relationLoaded('userDosen')) { // Mengakses relasi 'userDosen'
-                $userDosen = $userDosen->concat($prodi->userDosen);
-            }
-        }
-
-        
-
-        $semesters = Semester::where('status', 1)->get();
-
-
-        // --- AKHIR BAGIAN YANG DIUBAH/Disesuaikan ---
-
-        return view('mahasiswa.pengajuanbimbingan', compact('kampus', 'jurusans', 'prodis', 'userDosen', 'semesters','id_kampus','id_prodi','id_jurusan'));
-
     }
+
+    // Gabungkan detail_bimbingan dari semua user
+    foreach ($jadwalbimbingan as $user) {
+        foreach ($user->detail_bimbingan as $item) {
+            $gabungan->push($item);
+        }
+    }
+
+    // Kelompokkan berdasarkan hari dari relasi jadwal
+    $query = $gabungan->groupBy(fn($item) => optional($item->jadwal)->hari);
+
+
+    return view('mahasiswa.jadwalbimbingan', [
+        'query' => $query,
+        'id_kampus' => $id_kampus,
+        'id_prodi' => $id_prodi,
+        'listSemester' => $listSemester,
+        'listdosen' => $listdosen,
+    ]);
+}
+
+
+    public function pengajuanbimbingan(Request $request, $id_kampus, $id_prodi)
+    {
+        // $kampus = Kampus::with(['jurusan'])->where('id_kampus', $id_kampus)->get();
+
+        // $jurusan = collect();
+        // foreach ($kampus as $kmp) {
+        //     $jurusan = $jurusan->merge($kmp->jurusan);
+        // }
+        
+        // $prodi = Prodi::with(['userDosen'])->where('id_prodi', $id_prodi)->get();
+
+        // $userDosen = collect();
+        // foreach ($prodi as $prd) {
+        //     $userDosen = $userDosen->merge($prd->userDosen);
+        // }
+
+        
+        
+        // $jurusan = $kampus->jurusan;
+        // $prodi = Prodi::with(['usersDosen'])->where('id_prodi', $id_prodi)->first();
+        // $dosen = $prodi->usersDosen;
+    
+        // $golongan = Golongan::where('status', 0)->get();
+        // $semester = Semester::where('status', 1)->get();
+
+
+        
+
+        
+        return view('mahasiswa.pengajuanbimbingan', [
+            // 'kampus' => $kampus,
+            // 'prodi' => $prodi,
+            // 'jurusan' => $jurusan,
+            // 'dosen' => $userDosen,      
+            'id_kampus' => $id_kampus,
+            'id_prodi' => $id_prodi,
+            // 'golongan' => $golongan,
+            // 'semester' => $semester
+
+        ]);
+    }
+    
+
 
 
     //  public function cariSesiBimbingan(Request $request)
@@ -86,9 +172,9 @@ class MahasiswaController extends Controller
     //     $hari = 'senin';
 
 
-    //     // Lakukan query untuk mencari detail jadwal
-    //     $sesiTersedia = DetailJadwal::whereHas('jadwal', function ($query) use ($id_kampus, $id_jurusan, $id_prodi, $id_semester, $id_dosen, $tanggal) {
-    //         $query->where('id_kampus', $id_kampus)
+    //     // Lakukan jadwal untuk mencari detail jadwal
+    //     $sesiTersedia = DetailJadwal::whereHas('jadwal', function ($jadwal) use ($id_kampus, $id_jurusan, $id_prodi, $id_semester, $id_dosen, $tanggal) {
+    //         $jadwal->where('id_kampus', $id_kampus)
     //               ->where('id_jurusan', $id_jurusan)
     //               ->where('id_prodi', $id_prodi)
     //               ->where('id_dosen', $id_dosen) // Asumsi id_dosen ada di tabel jadwal atau bisa diakses melalui relasi lain
@@ -115,59 +201,106 @@ class MahasiswaController extends Controller
     // }
 
 
-    public function showJadwal($id_kampus, $id_prodi, Request $request)
-    {
+    // public function showJadwal($id_kampus, $id_prodi, Request $request)
+    // {
 
-        $dosens = User::where('level', 2)->where('id_prodi', $id_prodi)->get();
-        $semesters = Semester::all();
-        $golongans = Golongan::all();
+    //     $dosens = User::where('level', 2)->where('id_prodi', $id_prodi)->get();
+    //     $semesters = Semester::all();
+    //     $golongans = Golongan::all();
 
 
-        $dosenId = $request->input('dosen_id');
-        $semesterId = $request->input('semester');        
-        $jadwals = collect();
+    //     $dosenId = $request->input('dosen_id');
+    //     $semesterId = $request->input('semester');        
+    //     $jadwals = collect();
 
-        // Definisikan slot waktu standar
-        $timeSlots = [];
-        for ($i = 8; $i <= 16; $i++) {
-            $timeSlots[] = sprintf('%02d:00', $i) . ' - ' . sprintf('%02d:00', $i + 1);
-        }
+    //     // Definisikan slot waktu standar
+    //     $timeSlots = [];
+    //     for ($i = 8; $i <= 16; $i++) {
+    //         $timeSlots[] = sprintf('%02d:00', $i) . ' - ' . sprintf('%02d:00', $i + 1);
+    //     }
 
-        $query = Jadwal::with([
-            'sesi.detail_sesi.matkul.user',
-            'sesi.detail_sesi.pengajuan_bimbingan.user',
-            'sesi.detail_sesi.pengajuan_bimbingan.semester'
-        ]);
+    //     $jadwal = Jadwal::with([
+    //         'sesi.detail_sesi.matkul.user',
+    //         'sesi.detail_sesi.pengajuan_bimbingan.user',
+    //         'sesi.detail_sesi.pengajuan_bimbingan.semester'
+    //     ]);
 
-        // Filter berdasarkan semester jika dipilih
-        if (!empty($semesterId)) {
-            $query->where('id_semester', $semesterId);
-        }
+    //     // Filter berdasarkan semester jika dipilih
+    //     if (!empty($semesterId)) {
+    //         $jadwal->where('id_semester', $semesterId);
+    //     }
 
-        // Filter berdasarkan dosen jika dipilih
-        if (!empty($dosenId)) {
-            $query->whereHas('sesi.detail_sesi', function ($qDetailSesi) use ($dosenId) {
-                $qDetailSesi->where(function ($q) use ($dosenId) {
-                    $q->whereHas('matkul', function ($qMatkul) use ($dosenId) {
-                        $qMatkul->where('id_user', $dosenId);
-                    })->orWhereHas('pengajuan_bimbingan', function ($qPengajuan) use ($dosenId) {
-                        $qPengajuan->where('id_user', $dosenId);
-                    });
-                });
-            });
+    //     // Filter berdasarkan dosen jika dipilih
+    //     if (!empty($dosenId)) {
+    //         $jadwal->whereHas('sesi.detail_sesi', function ($qDetailSesi) use ($dosenId) {
+    //             $qDetailSesi->where(function ($q) use ($dosenId) {
+    //                 $q->whereHas('matkul', function ($qMatkul) use ($dosenId) {
+    //                     $qMatkul->where('id_user', $dosenId);
+    //                 })->orWhereHas('pengajuan_bimbingan', function ($qPengajuan) use ($dosenId) {
+    //                     $qPengajuan->where('id_user', $dosenId);
+    //                 });
+    //             });
+    //         });
 
-        }
+    //     }
 
        
 
-        // Menangani pesan peringatan jika tidak ada filter yang dipilih dan tidak ada jadwal
-        if (empty($dosenId) && empty($semesterId) && $jadwals->isEmpty()) {
-             $warningMessage = 'Silahkan pilih dosen atau semester untuk melihat jadwal.';
-        } elseif ((!empty($dosenId) || !empty($semesterId)) && $jadwals->isEmpty()) {
-            $warningMessage = 'Tidak ada jadwal yang tersedia untuk kriteria yang dipilih.';
-        }
+    //     // Menangani pesan peringatan jika tidak ada filter yang dipilih dan tidak ada jadwal
+    //     if (empty($dosenId) && empty($semesterId) && $jadwals->isEmpty()) {
+    //          $warningMessage = 'Silahkan pilih dosen atau semester untuk melihat jadwal.';
+    //     } elseif ((!empty($dosenId) || !empty($semesterId)) && $jadwals->isEmpty()) {
+    //         $warningMessage = 'Tidak ada jadwal yang tersedia untuk kriteria yang dipilih.';
+    //     }
 
-        return view('mahasiswa.jadwalbimbingan', compact('jadwals', 'dosenId','semesterId', 'dosens', 'id_kampus', 'id_prodi', 'semesters', 'warningMessage', 'timeSlots'));
-    }
+    //     return view('mahasiswa.jadwalbimbingan', compact('jadwals', 'dosenId','semesterId', 'dosens', 'id_kampus', 'id_prodi', 'semesters', 'warningMessage', 'timeSlots'));
+    // }
+
+  // public function index(Request $request, $id_kampus, $id_prodi)
+    // {
+    // $selectedDosen = $request->input('dosen');
+    // $selectedSemester = $request->input('semester');
+        
+    // $listSemester = Semester::where('status', 1)->get();
+
+    // $listdosen = User::where('level', 2)->where('id_prodi', $id_prodi)->get();
+
+    // // Query data dosen beserta relasi jadwalnya
+    // $jadwal = User::with([
+    //     'jadwal.detail_jadwal' => function ($q) {
+    //         $q->orderBy('id_ruangan')
+    //           ->orderBy('id_sesi');
+    //     },
+    //     'jadwal.detail_jadwal',
+    //     'jadwal.detail_jadwal.matkul',
+    //     'jadwal.detail_jadwal.ruangan',
+    //     'jadwal.detail_jadwal.golongan',
+    //     'jadwal.detail_jadwal.sesi',
+    // ])
+    // ->where('level', 2)
+    // ->where('id_prodi', $id_prodi);
+    
+    
+    // if ($selectedDosen) {
+    //     $jadwal->where('id_user', $selectedDosen);
+    // }
+
+    // if ($selectedSemester) {
+    //     $jadwal->whereHas('jadwal', function ($q) use ($selectedSemester) {
+    //         $q->where('id_semester', $selectedSemester);
+    //     });
+    // }
+
+    // $query = $jadwal->get();
+
+
+    
+
+    // return view('mahasiswa.jadwalbimbingan', compact('id_kampus', 'id_prodi','query', 'listSemester', 'listdosen'));
+    // }
+
+
+
+    
 
 }

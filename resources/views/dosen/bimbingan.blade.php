@@ -1,7 +1,7 @@
 @extends('dosen.layout')
 
 @section('dsnsection')
-    <!-- Konten utama -->
+    {{-- <!-- Konten utama -->
     <!-- Isi konten untuk halaman Dosen bisa ditambahkan di sini -->
 
     <div class="container mt-5">
@@ -87,6 +87,7 @@
 </div>
     
   </div>
-</div>
+</div> --}}
 
+@livewire('ApprovalBimbingan', ['id_prodi' => $id_prodi, 'id_kampus' => $id_kampus])
 @endsection

@@ -97,6 +97,15 @@
 </head>
 <body>
 
+   @php
+                // Ambil ID kampus dari parameter rute yang sedang aktif
+                // Ini akan bekerja karena semua rute di bawah dashboard akan memiliki {id}
+                $id_kampus = request()->route('id_kampus');
+                $id_prodi = request()->route('id_prodi');
+
+
+  @endphp
+
 <div class="d-flex">
   <!-- Sidebar -->
   <div class="sidebar d-flex flex-column p-3">
@@ -106,17 +115,17 @@
     </div>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="/dosen/d" class="nav-link">
+        <a href={{ route('dosen.dashboard', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }} class="nav-link">
           <img src={{ asset("img/home.svg") }} alt="Beranda" class="icon"> Dashboard
         </a>
       </li>
-      <li>
+      {{-- <li>
         <a href="/dosen/p" class="nav-link">
           <img src={{ asset("img/Absen.svg") }} alt="Dosen" class="icon"> Presensi
         </a>
       </li>
-      <li>
-        <a href="/dosen/b" class="nav-link">
+      <li> --}}
+        <a href={{ route('dosen.bimbingan', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }} class="nav-link">
           <img src={{ asset("img/Bimbingan.svg") }} alt="Kampus" class="icon"> Bimbingan
         </a>
       </li>
@@ -156,7 +165,12 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
-        <a href={{ route('logout.dosen', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }} class="btn btn-danger">Iya</a>
+
+        <form action="{{ route('logout.dosen', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }}" method="POST" class="d-inline">
+          @csrf
+          <button type="submit" class="btn btn-danger">Iya</button>
+        </form>
+        
       </div>
     </div>
   </div>

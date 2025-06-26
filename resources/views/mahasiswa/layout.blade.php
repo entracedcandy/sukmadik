@@ -116,17 +116,17 @@
     </div>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="{{ route('mahasiswa.jadwal', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }}" class="nav-link">
-          <img src={{ asset("img/Jadwal.svg") }} alt="Beranda" class="icon"> Jadwal Bimbingan
+        <a href="{{ route('mahasiswa.index', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }}" class="nav-link">
+          <img src={{ asset("img/Jadwal.svg") }} alt="Beranda" class="icon"> Jadwal & Bimbingan
         </a>
       </li>
       {{-- <li>
         <a href="/mhs/s" class="nav-link">
           <img src={{ asset("img/Sesi.svg") }}  alt="Dosen" class="icon"> Ketersediaan Sesi
-        </a>
+        </a>pe
       </li> --}}
       <li>
-        <a href="{{ route('mahasiswa.index', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }}" class="nav-link">
+        <a href="{{ route('mahasiswa.pengajuanbimbingan', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }}" class="nav-link">
           <img src={{ asset("img/Pengajuan.svg") }}  alt="Kampus" class="icon"> Pengajuan Bimbingan
         </a>
       </li>

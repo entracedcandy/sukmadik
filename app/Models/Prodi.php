@@ -12,17 +12,19 @@ class Prodi extends Model
     protected $primaryKey = 'id_prodi';
     protected $fillable = ['nama_prodi', 'id_jurusan'];
 
-    public function jurusan(): BelongsTo {
-        return $this->belongsTo(Kampus::class, 'id_jurusan', 'id_jurusan');
+    public function jurusan(){
+        return $this->belongsTo(jurusan::class, 'id_jurusan', 'id_jurusan');
     }
 
-    public function user(): HasMany{
+    public function user(){
         return $this->hasMany(User::class, 'id_prodi', 'id_prodi');
     }
 
-    public function userDosen(): HasMany{
+    public function userDosen(){
         return $this->hasMany(User::class, 'id_prodi', 'id_prodi')->where('level', 2);
     }
+
+
 
 
 }

@@ -9,7 +9,7 @@ class Detail_jadwal extends Model
 {
     protected $table = 'detail_jadwal';
     protected $primaryKey = 'id_d_jadwal';
-    protected $fillable = ['id_sesi', 'id_matkul', 'id_ruangan', 'id_jadwal', 'id_golongan'];
+    protected $fillable = ['id_sesi', 'id_matkul', 'id_ruangan', 'id_jadwal', 'id_golongan', 'id_semester',];
 
     /**
      * Get the jadwal that owns the Detail_jadwal
@@ -40,5 +40,19 @@ class Detail_jadwal extends Model
     {
         return $this->belongsTo(Golongan::class, 'id_golongan', 'id_golongan');
     }
+
+        public function semester(): BelongsTo
+    {
+        return $this->belongsTo(Semester::class, 'id_golongan', 'id_golongan');
+    }
+    
+    public function detail_bimbingan()
+    {
+        return $this->hasOne(Detail_bimbingan::class, 'id_sesi', 'id_sesi');
+    }
+
+
+
+    
     
 }

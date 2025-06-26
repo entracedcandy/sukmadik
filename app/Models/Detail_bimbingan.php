@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Relations\BelongsTo;
+use \Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Detail_bimbingan extends Model
 {
@@ -13,6 +14,7 @@ class Detail_bimbingan extends Model
 
     /**
      * Get the jadwal that owns the Detail_bimbingan
+     * 
      *
      * @return 
      */
@@ -25,4 +27,21 @@ class Detail_bimbingan extends Model
     {
         return $this->belongsTo(Sesi::class, 'id_sesi', 'id_sesi');
     }
+
+        public function golongan(): BelongsTo
+    {
+        return $this->belongsTo(Golongan::class, 'id_golongan', 'id_golongan');
+    }
+
+        public function semester(): BelongsTo
+    {
+        return $this->belongsTo(Semester::class, 'id_semester', 'id_semester');
+    }
+
+    // Di model DetailJadwal.php
+    public function detail_jadwal()
+    {
+        return $this->hasOne(Detail_Jadwal::class, 'id_jadwal', 'id_jadwal');
+    }
+
 }

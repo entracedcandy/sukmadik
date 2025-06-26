@@ -27,6 +27,28 @@ class Matkul extends Model
         return $this->belongsTo(Semester::class, 'id_semester', 'id_semester');
     }
 
+    public function pengampuutama(): BelongsTo
+    {
+    return $this->belongsTo(User::class, 'id_pengampu1', 'id_user');
+    }
+    
+    public function pengampukedua(): BelongsTo
+    {
+    return $this->belongsTo(User::class, 'id_pengampu2', 'id_user');
+    }
+
+    /**
+     * Get the user that owns the Matkul
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'foreign_key', 'other_key');
+    }
+
+    
+
     /**
      * Get all of the detail_jadwal for the matkul
      *
@@ -37,9 +59,5 @@ class Matkul extends Model
         return $this->hasMany(Detail_jadwal::class, 'id_matkul', 'id_matkul');
     }
 
-    public function detail_pengampu(): HasMany
-    {
-        return $this->hasMany(Detail_pengampu::class, 'id_matkul', 'id_matkul');
-    }
     
 }

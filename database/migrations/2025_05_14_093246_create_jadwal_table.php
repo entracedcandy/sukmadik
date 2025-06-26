@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('jadwal', function (Blueprint $table) {
             $table->id('id_jadwal');
             $table->tinyInteger('hari');
-            $table->foreignId('id_semester');
-            $table->foreign('id_semester')->references('id_semester')->on('semester')->onDelete('cascade');
             $table->foreignId('id_user');
             $table->foreign('id_user')->references('id_user')->on('user')->onDelete('cascade');
+            $table->tinyInteger('status');
 });
     }
 

@@ -10,7 +10,7 @@ class Jadwal extends Model
 {
     protected $table = 'jadwal';
     protected $primaryKey = 'id_jadwal';
-    protected $fillable = ['hari', 'id_semester', 'id_user'];
+    protected $fillable = ['hari', 'id_user','status'];
     
     /**
      * Get the user that owns the jadwal
@@ -19,7 +19,7 @@ class Jadwal extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id_user', 'id_user');
+        return $this->belongsTo(User::class, 'id_user');
     }
 
     public function semester(): BelongsTo

@@ -23,6 +23,11 @@ return new class extends Migration
             $table->foreign('id_sesi')->references('id_sesi')->on('sesi')->onDelete('cascade');
             $table->foreignId('id_jadwal');
             $table->foreign('id_jadwal')->references('id_jadwal')->on('jadwal')->onDelete('cascade');
+             $table->foreignId('id_golongan')->nullable();
+            $table->foreign('id_golongan')->references('id_golongan')->on('golongan')->onDelete('cascade');
+            $table->foreignId('id_semester')->nullable();
+            $table->foreign('id_semester')->references('id_semester')->on('semester')->onDelete('cascade');
+
             
         });
     }

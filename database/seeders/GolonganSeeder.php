@@ -15,15 +15,10 @@ class GolonganSeeder extends Seeder
     {
         
          DB::table('golongan')->insert([        
-            ['Nama_golongan' => 'A'],
-            ['Nama_golongan' => 'B'],
-            ['Nama_golongan' => 'C'],
-            ['Nama_golongan' => 'D'],
-            ['Nama_golongan' => 'E'],
-            ['Nama_golongan' => 'F'],
-            ['Nama_golongan' => 'G'],
-            ['Nama_golongan' => 'H'],
-
+            ['Nama_golongan' => 'A', 'status' => 0],
+            ['Nama_golongan' => 'B', 'status' => 0],
+            ['Nama_golongan' => 'A & B', 'status' => 1],
         ]);
     }
 }
+

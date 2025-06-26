@@ -18,8 +18,10 @@ return new class extends Migration
             $table->foreign('id_prodi')->references('id_prodi')->on('prodi')->onDelete('cascade');
             $table->foreignId('id_semester');
             $table->foreign('id_semester')->references('id_semester')->on('semester')->onDelete('cascade');
-            
-            
+            $table->foreignId('id_pengampu1');
+            $table->foreign('id_pengampu1')->references('id_user')->on('user')->onDelete('cascade');
+            $table->foreignId('id_pengampu2')->nullable();
+            $table->foreign('id_pengampu2')->references('id_user')->on('user')->onDelete('cascade');
          });
     }
 

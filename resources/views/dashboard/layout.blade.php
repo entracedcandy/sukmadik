@@ -95,6 +95,7 @@
 
 
   </style>
+  @livewireStyles()
 </head>
 <body>
 
@@ -183,5 +184,6 @@
     myModal.show(); 
   }
 </script>
+@livewireScripts()
 </body>
 </html>

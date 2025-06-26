@@ -2,243 +2,128 @@
 
 @section('mhssection')
 
-<style>
-    /* Styling dasar untuk jadwal */
-    .schedule-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
-    .schedule-table th,
-    .schedule-table td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: center;
-        vertical-align: top; /* Agar konten mulai dari atas */
-    }
-    .schedule-table th {
-        background-color: #f2f2f2;
-        font-weight: bold;
-    }
-    .schedule-table td.time-slot {
-        width: 100px; /* Lebar kolom waktu */
-        background-color: #e9ecef; /* Warna abu-abu untuk slot waktu */
-        font-weight: bold;
-    }
-    .schedule-cell {
-        background-color: #ffffff; /* Default background untuk sel kosong */
-    }
-    /* Contoh warna untuk kegiatan (sesuaikan dengan kebutuhan Anda) */
-    .activity-yellow {
-        background-color: #fff3cd; /* Warna kuning */
-        border: 1px solid #ffeeba;
-    }
-    .activity-green {
-        background-color: #d4edda; /* Warna hijau */
-        border: 1px solid #c3e6cb;
-    }
-    .activity-blue {
-        background-color: #d1ecf1; /* Warna biru */
-        border: 1px solid #bee5eb;
-    }
-    .activity-red {
-        background-color: #f8d7da; /* Warna merah */
-        border: 1px solid #f5c6cb;
-    }
-    .activity-grey {
-        background-color: #e2e3e5; /* Warna abu-abu gelap untuk istirahat/lain-lain */
-        border: 1px solid #d6d8db;
-    }
-    .activity-content {
-        font-size: 0.9em;
-    }
-    .activity-content strong {
-        display: block;
-        margin-bottom: 3px;
-    }
-    .activity-content small {
-        display: block;
-        font-style: italic;
-        color: #555;
-    }
-    .day-header {
-        background-color: #f8f9fa; /* Warna latar belakang untuk header hari */
-        font-size: 1.2em;
-        font-weight: bold;
-        text-align: left;
-        padding: 10px;
-        border-bottom: 2px solid #dee2e6;
-    }
-</style>
+@php
+    $selectedDosen = request()->get('dosen');
+    $filterStatus = request()->get('status', 1);
 
-<div class="container">
-    <h1>Daftar Jadwal Bimbingan</h1>
+    $statusLabel = [
+        1 => 'Sebelum UTS',
+        2 => 'Sesudah UTS'
+    ];
 
-    {{-- Filter Section --}}
-    <form action="{{ route('mahasiswa.jadwal', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }}" method="GET" class="mb-4">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="dosen_id">Filter Dosen:</label>
-                    <select name="dosen_id" id="dosen_id" class="form-control">
-                        <option value=""> Pilih Dosen </option> {{-- Ubah teks --}}
-                        @foreach($dosens as $dosen)
-                            <option value="{{ $dosen->id_user }}" {{ request('dosen_id') == $dosen->id_user ? 'selected' : '' }}>
-                                {{ $dosen->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
+    $hariMap = [
+        1 => 'Senin',
+        2 => 'Selasa',
+        3 => 'Rabu',
+        4 => 'Kamis',
+        5 => 'Jumat',
+        6 => 'Sabtu',
+        7 => 'Minggu',
+    ];
+@endphp
 
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="semester">Filter Semester:</label>
-                    <select name="semester" id="semester" class="form-control">
-                        <option value="">-- Pilih Semester (Semua Semester) --</option> {{-- Ubah teks --}}
-                        @foreach($semesters as $semester)
-                            <option value="{{ $semester->id_semester }}" {{ request('semester') == $semester->id_semester ? 'selected' : '' }}>
-                                {{ $semester->ajaran }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
+<div class="container my-4">
+    <form method="GET" action="{{ route('mahasiswa.index', [$id_kampus, $id_prodi]) }}" class="row g-3 align-items-end">
+        <div class="col-md-6">
+            <label for="dosen" class="form-label">Pilih Dosen</label>
+            <select id="dosen" name="dosen" class="form-select" required>
+                <option value="">-- Pilih Dosen --</option>
+                @foreach ($listdosen as $dosen)
+                    <option value="{{ $dosen->id_user }}" {{ request('dosen') == $dosen->id_user && $selectedDosen == $dosen->id_user ? 'selected' : '' }}>
+                        {{ $dosen->nama }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-            <div class="col-md-4 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary mr-2">Filter</button>
-                <a href="{{ route('mahasiswa.jadwal', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }}" class="btn btn-secondary">Reset</a>
-            </div>
+        <div class="col-md-4">
+            <label for="status" class="form-label">Status Jadwal</label>
+            <select id="status" name="status" class="form-select">
+                @foreach ($statusLabel as $key => $label)
+                    <option value="{{ $key }}" {{ $filterStatus == $key ? 'selected' : '' }}>
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Terapkan</button>
         </div>
     </form>
-    <hr>
-
-    {{-- @php
-        DD($jadwals);
-    @endphp --}}
-
-    {{-- Pesan Peringatan --}}
-    {{-- Hapus bagian ini jika warningMessage hanya untuk "pilih dosen dan semester" --}}
-    {{-- @if($warningMessage)
-        <div class="alert alert-warning" role="alert">
-            {{ $warningMessage }}
-        </div>
-    @endif --}}
-
-    {{-- Menampilkan Jadwal dalam format tabel --}}
-    @if($jadwals->isNotEmpty())
-        @php
-            // Fungsi helper untuk menentukan warna berdasarkan nama_jadwal
-            function getActivityColorClass($activityName) {
-                $activityName = strtolower($activityName);
-                if (str_contains($activityName,'12.00 - 13.00' )) {
-                    return 'activity-red';
-                // } elseif (str_contains($activityName, 'mobile application')) {
-                //     return 'activity-green';
-                // } elseif (str_contains($activityName, 'tata kelola') || str_contains($activityName, 'developer operational')) {
-                //     return 'activity-blue';
-                // } elseif (str_contains($activityName, '17.00 - 18.00')) { // Contoh untuk waktu tertentu
-                //     return 'activity-red';
-                // } elseif (str_contains($activityName, '12.00 - 13.00')) { // Contoh untuk waktu tertentu
-                //     return 'activity-grey';
-                }
-                return 'activity-cell'; // Default
-            }
-        @endphp
-
-        @foreach($jadwals as $hari => $jadwalHari)
-            <div class="day-header mt-4 mb-2">{{ $hari }}</div>
-            <table class="schedule-table">
-                <thead>
-                    <tr>
-                        <th class="time-slot" style="width:120px;">Waktu</th>
-                        <th>Kegiatan / Topik Bimbingan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                    // DD($jadwalHari);
-                        $eventsToday = []; // Untuk menyimpan event yang sudah diproses agar bisa menangani rowspan
-                        foreach ($jadwalHari as $jadwalItem) {
-                            foreach ($jadwalItem->sesi as $sesiItem) {
-                                $sesiStart = Carbon\Carbon::parse($sesiItem->start);
-                                $sesiEnd = Carbon\Carbon::parse($sesiItem->end);
-                                foreach ($sesiItem->detail_sesi as $detailSesiItem) {
-                                    $activityName = $detailSesiItem->matkul->nama_matkul ?? $detailSesiItem->pengajuan_bimbingan->nama_pengajuan ?? 'N/A';
-                                    $lecturerName = $detailSesiItem->matkul->user->nama ?? $detailSesiItem->pengajuan_bimbingan->user->nama ?? 'N/A';
-                                    // Hitung durasi sesi dalam jam untuk rowspan (asumsi slot per jam)
-                                    $durationHours = $sesiEnd->diffInMinutes($sesiStart) / 60;
-                                    // dump(isset($detailSesiItem->matkul->id_user));
-        
-                                    $eventsToday[] = [
-                                        'start_time' => $sesiStart->format('H:i'),
-                                        'end_time' => $sesiEnd->format('H:i'),
-                                        'activity_name' => isset($detailSesiItem->matkul->id_user) && $detailSesiItem->matkul->id_user == $dosenId? $activityName : '',
-                                        'lecturer_name' => isset($detailSesiItem->matkul->id_user) && $detailSesiItem->matkul->id_user == $dosenId? $lecturerName : '',
-                                        'rowspan' => $durationHours, // Akan dihitung ulang jika slot waktu berbeda
-                                        'detailSesi' => $detailSesiItem, // Simpan objek untuk akses data penuh
-                                        
-                                    ];
-                                }
-                            }
-                        }
-                        // Sort events by start time
-                        usort($eventsToday, function($a, $b) {
-                            return strtotime($a['start_time']) - strtotime($b['start_time']);
-                        });
-                        $currentEvents = []; // Untuk melacak event yang sedang aktif di slot waktu
-                    @endphp
-
-                    @foreach($timeSlots as $slot)
-                        @php
-                            $slotStart = Carbon\Carbon::parse(explode(' - ', $slot)[0]);
-                            $slotEnd = Carbon\Carbon::parse(explode(' - ', $slot)[1]);
-                            $hasActivityInSlot = false;
-                            $activityDisplayed = false;
-                        @endphp
-                        <tr>
-                            <td class="time-slot">{{ $slot }}</td>
-                            @foreach($eventsToday as $eventKey => $event)
-                                @php
-                                    $eventStart = \Carbon\Carbon::parse($event['start_time']);
-                                    $eventEnd = \Carbon\Carbon::parse($event['end_time']);
-                                    $isStartingNow = $eventStart->equalTo($slotStart);
-                                @endphp
-
-                                @if($isStartingNow && !$activityDisplayed)
-                                    @php  
-                                        $rowspan = $eventEnd->diffInMinutes($eventStart) / $slotEnd->diffInMinutes($slotStart);
-                                        $rowspan = max((int) $rowspan, 1);
-
-                                        $colorClass = getActivityColorClass($event['activity_name']);
-                                        $activityDisplayed = true;
-                                        $hasActivityInSlot = true;
-
-                                        unset($eventsToday[$eventKey]); // Prevent duplicate rendering
-                                    @endphp
-
-                                    <td rowspan="{{ $rowspan }}" class="{{ $colorClass }} activity-cell">
-                                        <div class="activity-content">
-                                            <strong>{{ $event['activity_name'] }}</strong>
-                                            <small>{{ $event['lecturer_name'] }}</small>
-                                        </div>
-                                    </td>
-                                    @break
-                                @endif
-                            @endforeach
-
-                            @if (!$hasActivityInSlot)
-                                <td class="activity-cell"></td>
-                            @endif
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        @endforeach
-    @elseif(!$warningMessage)
-        <p>Tidak ada jadwal yang tersedia untuk kriteria yang dipilih.</p>
-    @endif
-
 </div>
+
+@if (!$selectedDosen)
+    <div class="alert alert-warning text-center mt-3">
+        Silakan pilih dosen terlebih dahulu untuk menampilkan data.
+    </div>
+@elseif ($query->isEmpty())
+    <div class="alert alert-info text-center mt-3">
+        Tidak ada data jadwal atau bimbingan yang ditemukan.
+    </div>
+@else
+    @foreach ($query->sortKeys() as $hari => $items)
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-dark text-white fw-bold">
+                Hari: {{ $hariMap[$hari] ?? 'Tidak Diketahui' }}
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Jam</th>
+                            <th>Mata Kuliah / Bimbingan</th>
+                            <th>Golongan</th>
+                            <th>Nama Dosen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            // Urutkan sesi berdasarkan jam mulai
+                            $itemsBySesi = $items->sortBy(fn($item) => optional($item->sesi)->start)->groupBy('id_sesi');
+                        @endphp
+
+                        @foreach ($itemsBySesi as $idSesi => $group)
+                            @php
+                                $first = $group->first();
+                                $sesi = $first->sesi;
+                                $jam = $sesi ? $sesi->start . ' - ' . $sesi->end : '-';
+
+                                $bimbingan = $group->first(fn($item) => isset($item->tujuan));
+                                $kuliah = $group->first(fn($item) => isset($item->id_matkul));
+
+
+                                if ($bimbingan) {
+
+                                    $namaMatkul = $bimbingan->tujuan . ' ('. $bimbingan->nama. ' - ' . $bimbingan->nim . ' ) '   ?? 'Bimbingan';
+                                    $golongan = optional($bimbingan->golongan)->nama_golongan ?? '-';
+                                    $namaUser = optional($bimbingan->jadwal->user)->nama  ?? '-';
+                                } elseif ($kuliah) {
+                                    $namaMatkul = optional($kuliah->matkul)->nama_matkul ?? 'Jam Kosong';
+                                    $golongan = optional($kuliah->golongan)->nama_golongan ?? '-';
+                                    $namaUser = optional($kuliah->matkul?->pengampuutama)->nama ?? '-';
+                                    $pengampu2 = optional($kuliah->matkul?->pengampukedua)->nama;
+                                    if ($pengampu2) {
+                                        $namaUser .= ' & ' . $pengampu2;
+                                    }
+                                } else {
+                                    $namaMatkul = 'Jam Kosong';
+                                    $golongan = '-';
+                                    $namaUser = '-';
+                                }
+                            @endphp
+                            <tr>
+                                <td>{{ $jam }}</td>
+                                <td>{{ $namaMatkul }}</td>
+                                <td>{{ $golongan }}</td>
+                                <td>{{ $namaUser }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endforeach
+@endif
 
 @endsection

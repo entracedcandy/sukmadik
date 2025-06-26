@@ -7,6 +7,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends Authenticatable // <- HARUS pakai Authenticatable
 {
@@ -31,14 +33,24 @@ class User extends Authenticatable // <- HARUS pakai Authenticatable
 
     public function pengampuutama(): HasMany
     {
-        return $this->hasMany(Pengajuan_bimbingan::class, 'id_pengampu1', 'id_user');
+        return $this->hasMany(Matkul::class, 'id_pengampu1', 'id_user');
     }
 
-    public function pegnampukedua(): HasMany
+    public function pengampukedua(): HasMany
     {
-        return $this->hasMany(Pengajuan_bimbingan::class, 'id_pengampu2', 'id_user');
+        return $this->hasMany(Matkul::class, 'id_pengampu2', 'id_user');
     }
-    
+
+  
+    public function detail_jadwal(): HasManyThrough
+    {
+        return $this->hasManyThrough(Detail_jadwal::class, Jadwal::class, 'id_user','id_jadwal','id_user','id_jadwal');
+    }
+
+    public function detail_bimbingan(): HasManyThrough
+    {
+        return $this->hasManyThrough(detail_bimbingan::class, Jadwal::class, 'id_user','id_jadwal','id_user','id_jadwal');
+    }
 
     
     

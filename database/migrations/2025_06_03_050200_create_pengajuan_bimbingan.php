@@ -36,6 +36,7 @@ return new class extends Migration
             $table->foreign('id_sesi')->references('id_sesi')->on('sesi')->onDelete('cascade');
             $table->foreignId('id_jadwal');
             $table->foreign('id_jadwal')->references('id_jadwal')->on('jadwal')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

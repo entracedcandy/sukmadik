@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('golongan', function (Blueprint $table) {
             $table->id('id_golongan');
-            $table->char('nama_golongan');        
+            $table->char('nama_golongan'); 
+            $table->tinyInteger('status');       
         });
     }
 
