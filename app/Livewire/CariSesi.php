@@ -12,7 +12,7 @@ use App\Models\Jurusan;
 use App\Models\Prodi;
 use App\Models\Golongan;
 use App\Models\Detail_Jadwal;
-use App\Models\Pengajuan_Bimbingan;
+use App\Models\Pengajuan_bimbingan;
 
 
 class CariSesi extends Component
@@ -118,7 +118,7 @@ class CariSesi extends Component
 
         ]);
 
-        Pengajuan_Bimbingan::create([
+        Pengajuan_bimbingan::create([
             'email' => $this->SelectedEmail,
             'nama' => $this->SelectedNama,
             'nim' => $this->SelectedNIM,

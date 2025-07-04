@@ -61,6 +61,7 @@ Route::get('admin/{id_kampus}/{id_prodi}/dosen', [AdminController::class, 'dosen
 Route::get('admin/{id_kampus}/{id_prodi}/jadwal', [AdminController::class, 'jadwal'])->name('admin.jadwal');
 Route::get('admin/{id_kampus}/{id_prodi}/bimbingan', [AdminController::class, 'bimbingan'])->name('admin.bimbingan');
 Route::get('admin/{id_kampus}/{id_prodi}/jam', [AdminController::class, 'sesi'])->name('admin.sesi');
+Route::get('admin/{id_kampus}/{id_prodi}/matkul', [AdminController::class, 'matkul'])->name('admin.matkul');
 
 });
 

@@ -9,7 +9,7 @@ class Sesi extends Model
 {
     protected $table = 'sesi';
     protected $primaryKey = 'id_sesi';
-    protected $fillable = ['nama', 'start', 'end',];
+    protected $fillable = ['nama_sesi', 'start', 'end',];
 
     /**
      * Get all of the detail_bimbingan for the sesi

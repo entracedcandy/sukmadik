@@ -2,7 +2,7 @@
 
 
 @section('adminsection')
-    <h1>Matkul</h1>
     
     
+@livewire('AddMatkul', ['id_prodi' => $id_prodi, 'id_kampus' => $id_kampus])    
 @endsection

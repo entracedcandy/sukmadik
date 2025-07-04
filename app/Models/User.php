@@ -49,7 +49,7 @@ class User extends Authenticatable // <- HARUS pakai Authenticatable
 
     public function detail_bimbingan(): HasManyThrough
     {
-        return $this->hasManyThrough(detail_bimbingan::class, Jadwal::class, 'id_user','id_jadwal','id_user','id_jadwal');
+        return $this->hasManyThrough(Detail_bimbingan::class, Jadwal::class, 'id_user','id_jadwal','id_user','id_jadwal');
     }
 
     

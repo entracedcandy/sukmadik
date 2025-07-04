@@ -137,7 +137,7 @@
         </a>
       </li>
       <li>
-        <a href="/admin/m" class="nav-link">
+        <a href={{ route('admin.matkul', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }} class="nav-link">
           <img src={{ asset("img/matkul.svg") }} alt="Mata Kuliah" class="icon"> Mata Kuliah
         </a>
       </li> 

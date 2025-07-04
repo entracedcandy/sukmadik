@@ -9,6 +9,6 @@
 
 
 
-@livewire('Addkampus', ['id_prodi' => $id_prodi, 'id_kampus' => $id_kampus])
+@livewire('AddKampus', ['id_prodi' => $id_prodi, 'id_kampus' => $id_kampus])
     
 @endsection

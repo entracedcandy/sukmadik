@@ -75,7 +75,7 @@ class AdminController extends Controller
         ]);
     }
 
-        public function Jurusan(request $request, $id_kampus, $id_prodi)
+        public function jurusan(request $request, $id_kampus, $id_prodi)
     {
         return view('admin.jurusan',[
             'id_kampus' => $id_kampus,
@@ -83,7 +83,7 @@ class AdminController extends Controller
         ]);
     }
 
-        public function Prodi(request $request, $id_kampus, $id_prodi)
+        public function prodi(request $request, $id_kampus, $id_prodi)
     {
         return view('admin.prodi',[
             'id_kampus' => $id_kampus,
@@ -91,9 +91,17 @@ class AdminController extends Controller
         ]);
     }
 
-            public function Sesi(request $request, $id_kampus, $id_prodi)
+            public function sesi(request $request, $id_kampus, $id_prodi)
     {
         return view('admin.jam',[
+            'id_kampus' => $id_kampus,
+            'id_prodi' => $id_prodi,
+        ]);
+    }
+
+                public function matkul(request $request, $id_kampus, $id_prodi)
+    {
+        return view('admin.matkul',[
             'id_kampus' => $id_kampus,
             'id_prodi' => $id_prodi,
         ]);

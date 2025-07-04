@@ -12,29 +12,29 @@
 >
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="fw-bold">Setting Sesi</h4>
+            <h4 class="fw-bold">Setting Matkul</h4>
             <button type="button" class="btn btn-primary" @click="tambahModal.show()">Tambah sesi</button>
         </div>
 
         <table class="table align-middle">
             <thead class="bg-light">
                 <tr class="text-center">
-                    <th scope="col">Nama Sesi</th>
-                    <th scope="col">Start</th>
-                    <th scope="col">End</th>
+                    <th scope="col">Nama Matkul</th>
+                    <th scope="col">Prodi</th>
+                    <th scope="col">Semester</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($query as $item)
                     <tr class="text-center">
-                        <td>{{ $item->nama_sesi }}</td>
-                        <td>{{ $item->start }}</td>
-                        <td>{{ $item->end }}</td>
+                        <td>{{ $item->nama_matkul }}</td>
+                        <td>{{ optional($item->prodi)->nama_prodi }}</td>
+                        <td>{{ optional($item->semester)->nama_semester }}</td>
                         <td>
-                            <button wire:click="delete({{ $item->id_sesi }})" class="btn btn-outline-danger btn-sm px-2">Hapus</button>
-                            <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditKampus" wire:click="editKampus({{ $item->id_sesi }})">Edit</button>
-                            {{-- <button class="btn btn-outline-info btn-sm px-2" data-bs-toggle="modal" data-bs-target="#modalDetail" wire:click="showDetail({{ $item->id_sesi }})">Detail</button> --}}
+                            <button wire:click="delete({{ $item->id_matkul }})" class="btn btn-outline-danger btn-sm px-2">Hapus</button>
+                            <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditKampus" wire:click="editKampus({{ $item->id_matkul }})">Edit</button>
+                            <button class="btn btn-outline-info btn-sm px-2" data-bs-toggle="modal" data-bs-target="#modalDetail" wire:click="showDetail({{ $item->id_matkul }})">Detail</button>
                         </td>
                     </tr>
                 @endforeach

@@ -4,17 +4,20 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Sesi;
+use App\Models\Matkul;
 use Carbon\Carbon;
 
-class AddSesi extends Component
+class AddMatkul extends Component
 {
      public $selectedDetail = null;
      public $EditNama;
      public $EditStart;
      public $EditEnd;
      public $InsertNama;
-     public $InsertStart;
-     public $InsertEnd;
+     public $InsertProdi;
+     public $InsertSemester;
+     public $InsertPengampu1;
+     public $InsertPengampu2;
      public $selectedId;
 
     public function storeKampus()
@@ -81,11 +84,11 @@ class AddSesi extends Component
 
     public function render()
     {
-        $query = Sesi::all();
+        $query = Matkul::with('pengampuutama','pengampukedua','semester','prodi')->paginate(8);
+        
 
 
-
-        return view('livewire.add-sesi',
+        return view('livewire.add-matkul',
             [
                 'query' => $query
             ]);
