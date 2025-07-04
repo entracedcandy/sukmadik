@@ -94,60 +94,66 @@
     }
 
   </style>
+  @livewireStyles()
 </head>
 <body>
+
+   @php
+                $id_kampus = request()->route('id_kampus');
+                $id_prodi = request()->route('id_prodi');
+  @endphp
 
 <div class="d-flex">
   <!-- Sidebar -->
   <div class="sidebar d-flex flex-column p-3">
     <div class="d-flex align-items-center mb-4">
-      <img src="../img/logopolije.png" alt="Logo" class="logo me-2">
+      <img src={{ asset("img/logopolije.png") }} alt="Logo" class="logo me-2">
       <span class="fw-semibold small">Politeknik Negeri Jember</span>
     </div>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="/admin/d" class="nav-link">
-          <img src="../img/home.svg" alt="Beranda" class="icon"> Beranda
+        <a href={{ route('admin.dashboard', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }} class="nav-link">
+          <img src={{ asset("img/home.svg") }} alt="Beranda" class="icon"> Beranda
+        </a>
+      </li>
+      <li>
+        <a href={{ route('admin.kampus', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }} class="nav-link">
+          <img src={{ asset("img/Kampus.svg") }} alt="Kampus" class="icon"> Kampus
+        </a>
+      </li>
+      <li>
+        <a href={{ route('admin.jurusan', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }} class="nav-link">
+          <img src={{ asset("img/topi.svg") }} alt="Jurusan" class="icon"> Jurusan
+        </a>
+      </li>
+      <li>
+        <a href={{ route('admin.prodi', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }} class="nav-link">
+          <img src={{ asset("img/topi.svg") }} alt="Prodi" class="icon"> Prodi
         </a>
       </li>
       <li>
         <a href="/admin/ds" class="nav-link">
-          <img src="../img/dosentab.svg" alt="Dosen" class="icon"> Dosen
-        </a>
-      </li>
-      <li>
-        <a href="/admin/k" class="nav-link">
-          <img src="../img/kampus.svg" alt="Kampus" class="icon"> Kampus
-        </a>
-      </li>
-      <li>
-        <a href="/admin/ju" class="nav-link">
-          <img src="../img/topi.svg" alt="Jurusan" class="icon"> Jurusan
-        </a>
-      </li>
-      <li>
-        <a href="/admin/pr" class="nav-link">
-          <img src="../img/topi.svg" alt="Prodi" class="icon"> Prodi
+          <img src={{ asset("img/dosentab.svg") }} alt="Dosen" class="icon"> Dosen
         </a>
       </li>
       <li>
         <a href="/admin/m" class="nav-link">
-          <img src="../img/matkul.svg" alt="Mata Kuliah" class="icon"> Mata Kuliah
+          <img src={{ asset("img/matkul.svg") }} alt="Mata Kuliah" class="icon"> Mata Kuliah
         </a>
-      </li>
+      </li> 
       <li>
-        <a href="/admin/jm" class="nav-link">
-          <img src="../img/sesi.svg" alt="Jam" class="icon"> Jam
+        <a href={{ route('admin.sesi', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }} class="nav-link">
+          <img src={{ asset("img/Sesi.svg") }} alt="Jam" class="icon"> Sesi
         </a>
       </li>
       <li>
         <a href="/admin/jd" class="nav-link">
-          <img src="../img/jadwal.svg" alt="Jadwal" class="icon"> Jadwal
+          <img src={{ asset("img/Jadwal.svg") }} alt="Jadwal" class="icon"> Jadwal
         </a>
       </li>
       <li>
         <a href="/admin/pe" class="nav-link">
-          <img src="../img/akun.svg" alt="Pengguna" class="icon"> Pengguna
+          <img src={{ asset("img/akun.svg") }} alt="Pengguna" class="icon"> Pengguna
         </a>
       </li>
     </ul>
@@ -159,9 +165,9 @@
     <div class="navbar-top">
       <div class="user-info">
         <span id="nama-user">Admin</span>
-        <img src="../img/profile.png" alt="User">
+        <img src="{{ asset("img/profile.png") }}" alt="User">
         <button class="logout-btn" onclick="konfirmasiLogout()">
-          <img src="../img/logout.png" alt="Logout">
+          <img src={{ asset("img/logout.png") }} alt="Logout">
         </button>
       </div>
     </div>
@@ -182,11 +188,15 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
-        <a href="/admin" class="btn btn-danger">Iya</a>
+        <form action="{{ route('logout.admin', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]) }}" method="POST" class="d-inline">
+          @csrf
+          <button type="submit" class="btn btn-danger">Iya</button>
+        </form>
       </div>
     </div>
   </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -199,5 +209,6 @@
   document.getElementById('nama-user').textContent = "<?php echo $_SESSION['nama_user'] ?? 'Admin'; ?>";
 </script>
 
+@livewireScripts()
 </body>
 </html>

@@ -98,12 +98,8 @@
 <body>
 
    @php
-                // Ambil ID kampus dari parameter rute yang sedang aktif
-                // Ini akan bekerja karena semua rute di bawah dashboard akan memiliki {id}
                 $id_kampus = request()->route('id_kampus');
                 $id_prodi = request()->route('id_prodi');
-
-
   @endphp
 
 <div class="d-flex">

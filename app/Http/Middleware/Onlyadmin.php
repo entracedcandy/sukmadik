@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
-class Onlydosen
+class Onlyadmin
 {
     /**
      * Handle an incoming request.
@@ -16,14 +16,13 @@ class Onlydosen
      */
     public function handle(Request $request, Closure $next): Response
     {
-
-        $id_kampus = $request->route('id_kampus');
+         $id_kampus = $request->route('id_kampus');
         $id_prodi = $request->route('id_prodi');
-        if (Auth::check() && Auth::user()->level == 2) {
+        if (Auth::check() && Auth::user()->level == 1) {
             return $next($request); 
         }
 
 
-        return redirect(route('formlogin.dosen', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]))->with('error', 'Akses hanya untuk dosen.');
+        return redirect(route('formlogin.admin', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi]))->with('error', 'Akses hanya untuk dosen.');
     }
 }

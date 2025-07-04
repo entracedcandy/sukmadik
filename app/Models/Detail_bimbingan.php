@@ -10,7 +10,7 @@ class Detail_bimbingan extends Model
 {
     protected $table = 'detail_bimbingan';
     protected $primaryKey = 'id_d_bimbingan';
-    protected $fillable =  ['email', 'nama', 'nim', 'tujuan', 'catatan', 'tanggal', 'id_sesi', 'id_jadwal'];
+    protected $fillable =  ['email', 'nama', 'nim', 'tujuan', 'catatan', 'tanggal', 'id_sesi', 'id_jadwal', 'id_golongan', 'id_semester'];
 
     /**
      * Get the jadwal that owns the Detail_bimbingan

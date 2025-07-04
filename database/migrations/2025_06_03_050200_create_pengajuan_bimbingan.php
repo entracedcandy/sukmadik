@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('tujuan');
             $table->text('catatan')->nullable();
             $table->date('tanggal');
-            $table->string('status')->default('diajukan');
+            $table->string('status')->default('waiting');
             $table->foreignId('id_user');
             $table->foreign('id_user')->references('id_user')->on('user')->onDelete('cascade');
             $table->foreignId('id_kampus');

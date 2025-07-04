@@ -127,12 +127,12 @@
         </a> 
       </li>
       <li>
-        <a href="{{ route('login.dosen', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi])  }}" class="nav-link">
+        <a href="{{ route('formlogin.dosen', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi])  }}" class="nav-link">
           <img src={{ asset("img/dosentab.svg") }} alt="Dosen" class="icon"> Dosen
         </a>
       </li>
       <li>
-        <a href="{{ route('dashboard.welcome', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi])  }}" class="nav-link">
+        <a href="{{ route('formlogin.admin', ['id_kampus' => $id_kampus, 'id_prodi' => $id_prodi])  }}" class="nav-link">
           <img src={{ asset("img/admintab.svg") }} alt="Kampus" class="icon"> Admin
         </a>
       </li>

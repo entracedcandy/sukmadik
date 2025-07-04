@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nama_sesi');
             $table->time('start');
             $table->time('end');
+            $table->timestamps();
         });
     }
 

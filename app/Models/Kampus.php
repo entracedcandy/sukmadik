@@ -24,7 +24,7 @@ class Kampus extends Model
 
     public function prodi(): HasManyThrough
     {
-        return $this->hasManyThrough(Prodi::class, Jurusan::class);
+        return $this->hasManyThrough(Prodi::class, Jurusan::class, 'id_kampus', 'id_jurusan', 'id_kampus', 'id_jurusan');
     }
 
      public function userDosen()

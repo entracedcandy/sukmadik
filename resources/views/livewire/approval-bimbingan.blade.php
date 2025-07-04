@@ -33,14 +33,16 @@
                                 @elseif($item->status === 'ditolak')
                                     <span class="badge bg-danger">Ditolak</span>
                                 @elseif($item->status === 'waiting')
-                                    <span class="badge bg-secndary">Menunggu Persetujuan</span>
+                                    <span class="badge bg-secondary">Menunggu Persetujuan</span>
                                 @else
+                                
                                     <span class="badge bg-secondary">-</span>
                                 @endif
                             </td>
+
                             <td>
-                                <button wire:click="approve({{ $item->id_pengajuan }}, 1)" class="btn btn-outline-primary btn-sm px-2">Ya</button>
-                                <button wire:click="approve({{ $item->id_pengajuan }}, 0)" class="btn btn-outline-danger btn-sm px-2">Tidak</button>
+                                <button wire:click="approve({{ $item->id_pengajuan }}, 'acc')" class="btn btn-outline-primary btn-sm px-2">Ya</button>
+                                <button wire:click="approve({{ $item->id_pengajuan }}, 'ditolak')" class="btn btn-outline-danger btn-sm px-2">Tidak</button>
                                 <button class="btn btn-outline-info btn-sm px-2" data-bs-toggle="modal" data-bs-target="#modalDetail" wire:click="showDetail({{ $item->id_pengajuan }})">Detail</button>
                             </td>
                         </tr>

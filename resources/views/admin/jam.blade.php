@@ -2,7 +2,7 @@
 
 
 @section('adminsection')
-    <h1>Jam</h1>
+
     
-    
+@livewire('AddSesi', ['id_prodi' => $id_prodi, 'id_kampus' => $id_kampus])    
 @endsection
